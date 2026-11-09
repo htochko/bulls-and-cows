@@ -1,10 +1,12 @@
 {
+
   "compilerOptions": {
     
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["vitest/globals", "node"],
     "useDefineForClassFields": true,
     
     "skipLibCheck": true,

@@ -6,7 +6,30 @@ export function setupApp(element: HTMLElement): void {
   `;
 }
 
+export enum Base { bin = 2, oct = 8,  dec = 10, hex = 16 }
+
 const appElement = globalThis.document?.querySelector<HTMLDivElement>('#app');
 if (appElement) {
-  setupApp(appElement);
+  // todo
+}
+
+export function generateSecret(base: Base, length: number):string {
+  // todo
+}
+
+export function evaluateGuess(value: number) {
+   // todo
+}
+
+export function isValidGuess(value: number): boolean {
+  console.log(value);
+  return false;
+}
+
+export function createDigitValidator() {
+ // todo
+}
+
+export function countPossibleSecrets() {
+ // todo
 }

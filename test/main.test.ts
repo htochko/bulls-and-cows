@@ -1,12 +1,19 @@
-import test from 'node:test';
-import assert from 'node:assert';
-import { setupApp } from '../src/main.ts';
+import { describe, it, expect } from 'vitest';
+import { 
+  generateSecret, 
+  evaluateGuess, 
+  isValidGuess, 
+  createDigitValidator, 
+  countPossibleSecrets 
+} from '../src/main.ts';
 
-test('setupApp renders correct content', () => {
-  // initial html
-  const mockElement = { innerHTML: '' } as HTMLElement;
-  
-  setupApp(mockElement);
-  
-  assert.ok(mockElement.innerHTML.includes('Bulls and cows'));
+describe('API & Methods check', () => {
+  it('has all required methods and functions', () => {
+    // Проверяем наличие и типы отдельных функций
+    expect(typeof generateSecret).toBe('function');
+    expect(typeof evaluateGuess).toBe('function');
+    expect(typeof isValidGuess).toBe('function');
+    expect(typeof createDigitValidator).toBe('function');
+    expect(typeof countPossibleSecrets).toBe('function');
+  });
 });
