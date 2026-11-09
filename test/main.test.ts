@@ -66,3 +66,14 @@ describe('generateSecret constraints', () => {
     expect(() => generateSecret(Base.bin, 6)).toThrow();
   });
 });
+
+describe('generateSecret с детерминированным random', () => {
+  it('генерирует предсказуемый секрет при фиксированном источнике случайности', () => {
+  
+    const mockRandom = () => 0.1;
+
+    const secret = generateSecret(Base.dec, 3, mockRandom);
+    
+    expect(secret).toBe('021'); // значение при детерминированном перемешивании
+  });
+});

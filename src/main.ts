@@ -13,7 +13,7 @@ if (appElement) {
   // todo
 }
 
-export function generateSecret(base: Base, length: number):string {
+export function generateSecret(base: Base, length: number, random: () => number = Math.random): string {
   // todo
 }
 
