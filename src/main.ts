@@ -132,7 +132,7 @@ export function isValidGuess(guess: string, base: Base, length: number): boolean
   return true;
 }
 
-export function createDigitValidator() {
+export function createDigitValidator(base: Base, length: number) {
  // todo
 }
 
