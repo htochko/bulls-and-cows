@@ -13,6 +13,7 @@
   "devDependencies": {
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
+    "jiti": "^2.7.0",
     "prettier": "^3.9.10",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
