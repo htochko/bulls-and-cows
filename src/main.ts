@@ -89,7 +89,7 @@ export function evaluateGuess(guess: string, secret: string):GuessResult {
   return { bulls, cows };
 }
 
-export function isValidGuess(value: number): boolean {
+export function isValidGuess(value: number, base: Base, length: number): boolean {
   console.log(value);
   return false;
 }

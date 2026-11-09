@@ -5,7 +5,7 @@ import {
   isValidGuess, 
   createDigitValidator, 
   countPossibleSecrets,
-  Base, GuessResult 
+  Base 
 } from '../src/main.ts';
 
 describe('API & Methods check', () => {
@@ -124,6 +124,39 @@ describe('evaluateGuess (по принципу FIRST)', () => {
     const result = evaluateGuess(guess, secret);
     
     expect(result).toEqual({ bulls: 2, cows: 2 });
+  });
+
+});
+
+// isValidGues
+describe('isValidGuess (проверка ввода пользователя)', () => {
+  
+  it('возвращает true для корректной десятичной попытки', () => {
+    expect(isValidGuess('1234', Base.dec, 4)).toBe(true);
+  });
+
+  it('возвращает false, если длина строки не совпадает с требуемой', () => {
+    expect(isValidGuess('123', Base.dec, 4)).toBe(false);
+    expect(isValidGuess('12345', Base.dec, 4)).toBe(false);
+  });
+
+  it('возвращает false, если в попытке есть повторяющиеся цифры', () => {
+    expect(isValidGuess('1123', Base.dec, 4)).toBe(false);
+  });
+
+  it('возвращает false при наличии недопустимых символов для выбранной базы', () => {
+    expect(isValidGuess('123a', Base.dec, 4)).toBe(false); // буква в десятичной системе
+    expect(isValidGuess('0892', Base.oct, 4)).toBe(false); // цифра 8 и 9 вне восьмеричной системы
+  });
+
+  it('строго проверяет ограничения для бинарной системы (Base.bin)', () => {
+    expect(isValidGuess('10', Base.bin, 2)).toBe(true);
+    expect(isValidGuess('101', Base.bin, 3)).toBe(false); // для bin длина должна быть строго 2
+  });
+
+  it('корректно обрабатывает шестнадцатеричную систему (Base.hex)', () => {
+    expect(isValidGuess('a1b2', Base.hex, 4)).toBe(true);
+    expect(isValidGuess('g1b2', Base.hex, 4)).toBe(false); // 'g' не входит в hex
   });
 
 });
