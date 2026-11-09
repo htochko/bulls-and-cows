@@ -54,7 +54,7 @@ export function generateSecret(base: Base, length: number, random: () => number 
   return charArray.slice(0, length).join('');
 }
 
-export function evaluateGuess(value: number) {
+export function evaluateGuess(value: string, secret: string) {
    // todo
 }
 

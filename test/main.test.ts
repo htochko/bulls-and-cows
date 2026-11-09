@@ -5,7 +5,7 @@ import {
   isValidGuess, 
   createDigitValidator, 
   countPossibleSecrets,
-  Base 
+  Base, GuessResult 
 } from '../src/main.ts';
 
 describe('API & Methods check', () => {
@@ -76,4 +76,54 @@ describe('generateSecret с детерминированным random', () => {
     
     expect(secret).toBe('923'); // значение при детерминированном перемешивании
   });
+});
+
+// evaluateGuess
+describe('evaluateGuess (по принципу FIRST)', () => {
+  
+  it('F (Fast) & S (Self-validating): мгновенно возвращает 4 быка при абсолютно точном совпадении', () => {
+    const secret = '1234';
+    const guess = '1234';
+    
+    const result = evaluateGuess(guess, secret);
+    
+    expect(result).toEqual({ bulls: 4, cows: 0 });
+  });
+
+  it('I (Independent): корректно считает только коров, когда все цифры угаданы, но стоят не на своих местах', () => {
+    const secret = '1234';
+    const guess = '4321'; // Все цифры есть, но позиции перепутаны
+    
+    const result = evaluateGuess(guess, secret);
+    
+    expect(result).toEqual({ bulls: 0, cows: 4 });
+  });
+
+  it('R (Repeatable): выдает предсказуемый смешанный результат (быки + коровы) при многократных запусках', () => {
+    const secret = '1234';
+    const guess = '1324'; // '1' и '4' — на своих местах (быки), '3' и '2' — не на своих (коровы)
+    
+    const result = evaluateGuess(guess, secret);
+    
+    expect(result).toEqual({ bulls: 2, cows: 2 });
+  });
+
+  it('I (Independent): возвращает нули при полном отсутствии совпадений', () => {
+    const secret = '1234';
+    const guess = '5678';
+    
+    const result = evaluateGuess(guess, secret);
+    
+    expect(result).toEqual({ bulls: 0, cows: 0 });
+  });
+
+  it('S (Self-validating): корректно обрабатывает частичные пересечения в других системах счисления (например, hex)', () => {
+    const secret = 'a1b2';
+    const guess = 'a2b1'; // 'a' и 'b' на местах (2 быка), '1' и '2' переставлены (2 коровы)
+    
+    const result = evaluateGuess(guess, secret);
+    
+    expect(result).toEqual({ bulls: 2, cows: 2 });
+  });
+
 });
