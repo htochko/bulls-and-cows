@@ -159,25 +159,6 @@ export function countPossibleSecrets(
   base: Base, 
   length: number
 ): number {
-  const allSecrets = generateAllPossibleSecrets(base, length);
-   
-  const possible = allSecrets.filter(secret => {
-    for (const record of history) {
-      const simulation = evaluateGuess(record.guess, secret);
-      if (
-        simulation.bulls !== record.feedback.bulls || 
-        simulation.cows !== record.feedback.cows
-      ) {
-        return false;
-      }
-    }
-    return true;
-  });
-
-  return possible.length;
-}
-
-function generateAllPossibleSecrets(base: Base, length: number): string[] {
   let chars = '';
   switch (base) {
     case Base.bin: chars = BINARIES; break;
@@ -186,20 +167,42 @@ function generateAllPossibleSecrets(base: Base, length: number): string[] {
     case Base.hex: chars = HEXS; break;
   }
 
-  const results: string[] = [];
+  const charArray = chars.split('');
+  const memo = new Map<string, number>();
 
-  function rearrange(current: string, available: string[]) {
-    if (current.length === length) {
-      results.push(current);
-      return;
+  function countValidRecursive(currentIndex: number, currentSecret: string, usedMask: number): number {
+    if (currentSecret.length === length) {
+      for (const record of history) {
+        const simulation = evaluateGuess(record.guess, currentSecret);
+        if (
+          simulation.bulls !== record.feedback.bulls || 
+          simulation.cows !== record.feedback.cows
+        ) {
+          return 0;
+        }
+      }
+      return 1;
     }
-    for (let i = 0; i < available.length; i++) {
-      const nextAvailable = [...available];
-      nextAvailable.splice(i, 1);
-      rearrange(current + available[i], nextAvailable);
+
+    const memoKey = `${currentSecret}_${usedMask}`;
+    if (memo.has(memoKey)) {
+      return memo.get(memoKey)!;
     }
+
+    let validCount = 0;
+
+    for (let i = 0; i < charArray.length; i++) {
+      if ((usedMask & (1 << i)) === 0) {
+        const nextSecret = currentSecret + charArray[i];
+        const nextMask = usedMask | (1 << i);
+
+        validCount += countValidRecursive(currentIndex + 1, nextSecret, nextMask);
+      }
+    }
+
+    memo.set(memoKey, validCount);
+    return validCount;
   }
 
-  rearrange('', chars.split(''));
-  return results;
+  return countValidRecursive(0, '', 0);
 }
