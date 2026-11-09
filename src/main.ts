@@ -72,7 +72,7 @@ export function generateSecret(base: Base, length: number, random: () => number 
 export function evaluateGuess(guess: string, secret: string):GuessResult {
   const guessChars = guess.split('');
   const secretChars = secret.split('');
-  
+
   const nonBulls = guessChars.reduce(
     (acc, char, index) => {
       if (char === secretChars[index]) {
@@ -145,9 +145,12 @@ export function isValidGuess(guess: string, base: Base, length: number): boolean
   return true;
 }
 
-export function createDigitValidator(base: Base, length: number) {
- return (guess: string): boolean => {
-    return isValidGuess(guess, base, length);
+//
+export function createDigitValidator(base: Base) {
+  return (length: number) => {
+    return (guess: string): boolean => {
+      return isValidGuess(guess, base, length);
+    };
   };
 }
 

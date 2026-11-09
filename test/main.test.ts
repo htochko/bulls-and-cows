@@ -161,40 +161,22 @@ describe('isValidGuess (проверка ввода пользователя)', 
 
 });
 
-// createDigitValidator suit
-describe('createDigitValidator (фабрика валидаторов FIRST)', () => {
+describe('createDigitValidator (каррированная фабрика)', () => {
   
-  it('F (Fast) & S (Self-validating): создает работающую функцию-валидатор для заданной базы и длины', () => {
-    const decValidator = createDigitValidator(Base.dec, 3);
+  it('позволяет поэтапно передавать параметры (base -> length -> guess)', () => {
+    const decimalFactory = createDigitValidator(Base.dec);
     
-    expect(typeof decValidator).toBe('function');
-
-    expect(decValidator('123')).toBe(true);
-    expect(decValidator('12')).toBe(false);   // короче нормы
-    expect(decValidator('1234')).toBe(false); // длиннее нормы
-    expect(decValidator('112')).toBe(false);  // повторяющиеся цифры
-    expect(decValidator('12a')).toBe(false);  // недопустимый символ
+    const dec4Validator = decimalFactory(4);
+    
+    expect(dec4Validator('1234')).toBe(true);
+    expect(dec4Validator('123')).toBe(false);
   });
 
-  it('I (Independent) & R (Repeatable): изолирует разные инстансы для разных систем счисления', () => {
-    const binValidator = createDigitValidator(Base.bin, 2);
-    const hexValidator = createDigitValidator(Base.hex, 4);
+  it('корректно работает для разных систем счисления при каррировании', () => {
+    const hexValidator = createDigitValidator(Base.hex)(3);
 
-    // Бинарный валидатор
-    expect(binValidator('10')).toBe(true);
-    expect(binValidator('101')).toBe(false); // длина строго 2
-
-    // Шестнадцатеричный валидатор
-    expect(hexValidator('a1b2')).toBe(true);
-    expect(hexValidator('g1b2')).toBe(false);
-  });
-
-  it('S (Self-validating): проверка пустых строк и невалидных типов на входе', () => {
-    const validator = createDigitValidator(Base.dec, 4);
-
-    expect(validator('')).toBe(false);
-    expect(validator(null as unknown as string)).toBe(false);
-    expect(validator(undefined as unknown as string)).toBe(false);
+    expect(hexValidator('a1b')).toBe(true);
+    expect(hexValidator('g12')).toBe(false); // 'g' не входит в hex
   });
 
 });
