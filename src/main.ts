@@ -70,33 +70,36 @@ export function generateSecret(base: Base, length: number, random: () => number 
 }
 
 export function evaluateGuess(guess: string, secret: string):GuessResult {
-   let bulls = 0;
-  let cows = 0;
-
-  const secretChars = secret.split('');
   const guessChars = guess.split('');
+  const secretChars = secret.split('');
+  
+  const nonBulls = guessChars.reduce(
+    (acc, char, index) => {
+      if (char === secretChars[index]) {
+        return { ...acc, bulls: acc.bulls + 1 };
+      }
+      return {
+        ...acc,
+        guessUnmatched: [...acc.guessUnmatched, char],
+        secretUnmatched: [...acc.secretUnmatched, secretChars[index]],
+      };
+    },
+    { bulls: 0, guessUnmatched: [] as string[], secretUnmatched: [] as string[] }
+  );
 
-  // Подсчет быков
-  for (let i = 0; i < guessChars.length; i++) {
-    if (guessChars[i] === secretChars[i]) {
-      bulls++;
-      // исключение из поиска
-      secretChars[i] = '_';
-      guessChars[i] = 'X';
-    }
-  }
+  const { cows } = nonBulls.guessUnmatched.reduce(
+    (acc, char) => {
+      const index = acc.secretUnmatched.indexOf(char);
+      if (index !== -1) {
+        acc.secretUnmatched.splice(index, 1);
+        return { cows: acc.cows + 1, secretUnmatched: acc.secretUnmatched };
+      }
+      return acc;
+    },
+    { cows: 0, secretUnmatched: nonBulls.secretUnmatched }
+  );
 
-  // Подсчет коров
-  for (let i = 0; i < guessChars.length; i++) {
-    const char = guessChars[i];
-    const secretIndex = secretChars.indexOf(char);
-    if (secretIndex !== -1) {
-      cows++;
-      secretChars[secretIndex] = '_';
-    }
-  }
-
-  return { bulls, cows };
+  return { bulls: nonBulls.bulls, cows };
 }
 
 export function isValidGuess(guess: string, base: Base, length: number): boolean {
