@@ -89,9 +89,47 @@ export function evaluateGuess(guess: string, secret: string):GuessResult {
   return { bulls, cows };
 }
 
-export function isValidGuess(value: number, base: Base, length: number): boolean {
-  console.log(value);
-  return false;
+export function isValidGuess(guess: string, base: Base, length: number): boolean {
+  if (typeof guess !== 'string') {
+    return false;
+  }
+
+  if (guess.length !== length) {
+    return false;
+  }
+
+  if (base === Base.bin && length !== 2) {
+    return false;
+  }
+
+  let regex: RegExp;
+  switch (base) {
+    case Base.bin:
+      regex = /^[01]+$/;
+      break;
+    case Base.oct:
+      regex = /^[0-7]+$/;
+      break;
+    case Base.dec:
+      regex = /^[0-9]+$/;
+      break;
+    case Base.hex:
+      regex = /^[0-9a-fA-F]+$/;
+      break;
+    default:
+      return false;
+  }
+
+  if (!regex.test(guess)) {
+    return false;
+  }
+
+  const uniqueChars = new Set(guess);
+  if (uniqueChars.size !== guess.length) {
+    return false;
+  }
+
+  return true;
 }
 
 export function createDigitValidator() {
