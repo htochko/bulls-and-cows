@@ -8,12 +8,24 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,html,css,json}\"",
-    "test": "node --test --import tsx test/**/*.test.ts"
+    "test": "node --test --import tsx test/**/*.test.ts",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{html,css,json}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
     "jiti": "^2.7.0",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.9.10",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3",
