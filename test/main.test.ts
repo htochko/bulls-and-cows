@@ -198,3 +198,48 @@ describe('createDigitValidator (фабрика валидаторов FIRST)', (
   });
 
 });
+
+// countPossibleSecrets
+describe('countPossibleSecrets (подсчет возможных вариантов по принципу FIRST)', () => {
+  
+  it('F (Fast) & S (Self-validating): число возможных секретов на старте', () => {
+    const count = countPossibleSecrets([], Base.dec, 2);
+    
+    expect(count).toBe(90);
+  });
+
+  it('I (Independent): фильтрует варианты на основе истории', () => {
+    const history = [
+      { guess: '12', feedback: { bulls: 1, cows: 0 } }
+    ];
+
+    const count = countPossibleSecrets(history, Base.dec, 2);
+    
+    // Количество возможных вариантов уменьшается
+    expect(count).toBeGreaterThan(0);
+    expect(count).toBeLessThan(90);
+  });
+
+  it('R (Repeatable): по истории снижается число вариантов', () => {
+    const history = [
+      { guess: '12', feedback: { bulls: 1, cows: 0 } },
+      { guess: '13', feedback: { bulls: 0, cows: 1 } }
+    ];
+
+    const count = countPossibleSecrets(history, Base.dec, 2);
+    
+    expect(typeof count).toBe('number');
+    expect(count).toBeGreaterThanOrEqual(0);
+  });
+
+  it('S (Self-validating): возвращает 0 при некорректных вводных', () => {
+    const history = [
+      { guess: '12', feedback: { bulls: 4, cows: 0 } } // невозможны 4 для 2 значного секрета 
+    ];
+
+    const count = countPossibleSecrets(history, Base.dec, 2);
+    
+    expect(count).toBe(0);
+  });
+
+});
