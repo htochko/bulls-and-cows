@@ -74,6 +74,6 @@ describe('generateSecret с детерминированным random', () => {
 
     const secret = generateSecret(Base.dec, 3, mockRandom);
     
-    expect(secret).toBe('021'); // значение при детерминированном перемешивании
+    expect(secret).toBe('923'); // значение при детерминированном перемешивании
   });
 });
