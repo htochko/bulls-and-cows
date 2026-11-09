@@ -133,7 +133,9 @@ export function isValidGuess(guess: string, base: Base, length: number): boolean
 }
 
 export function createDigitValidator(base: Base, length: number) {
- // todo
+ return (guess: string): boolean => {
+    return isValidGuess(guess, base, length);
+  };
 }
 
 export function countPossibleSecrets() {
