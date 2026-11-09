@@ -1,3 +1,8 @@
+const BINARIES = '01';
+const OCTALS = '01234567';
+const DECIMALS = '0123456789';
+const HEXS = '0123456789abcdf'
+
 export function setupApp(element: HTMLElement): void {
   element.innerHTML = `
     <div style="font-family: sans-serif; text-align: center; margin-top: 50px;">
@@ -13,9 +18,14 @@ export interface GuessResult {
   cows: number;
 }
 
+export interface AttemptRecord {
+  guess: string;
+  feedback: { bulls: number; cows: number };
+}
+
 const appElement = globalThis.document?.querySelector<HTMLDivElement>('#app');
 if (appElement) {
-  // todo
+  // todo UX here
 }
 
 export function generateSecret(base: Base, length: number, random: () => number = Math.random): string {
@@ -30,16 +40,16 @@ export function generateSecret(base: Base, length: number, random: () => number 
   let chars = '';
   switch (base) {
     case Base.bin:
-      chars = '01';
+      chars = BINARIES;
       break;
     case Base.oct:
-      chars = '01234567';
+      chars = OCTALS;
       break;
     case Base.dec:
-      chars = '0123456789';
+      chars = DECIMALS;
       break;
     case Base.hex:
-      chars = '0123456789abcdef';
+      chars = HEXS;
       break;
     default:
       throw new Error('Неподдерживаемая система счисления.');
@@ -138,6 +148,52 @@ export function createDigitValidator(base: Base, length: number) {
   };
 }
 
-export function countPossibleSecrets() {
- // todo
+export function countPossibleSecrets(
+  history: AttemptRecord[], 
+  base: Base, 
+  length: number
+): number {
+  const allSecrets = generateAllPossibleSecrets(base, length);
+   
+  const possible = allSecrets.filter(secret => {
+    for (const record of history) {
+      const simulation = evaluateGuess(record.guess, secret);
+      if (
+        simulation.bulls !== record.feedback.bulls || 
+        simulation.cows !== record.feedback.cows
+      ) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  return possible.length;
+}
+
+function generateAllPossibleSecrets(base: Base, length: number): string[] {
+  let chars = '';
+  switch (base) {
+    case Base.bin: chars = BINARIES; break;
+    case Base.oct: chars = OCTALS; break;
+    case Base.dec: chars = DECIMALS; break;
+    case Base.hex: chars = HEXS; break;
+  }
+
+  const results: string[] = [];
+
+  function rearrange(current: string, available: string[]) {
+    if (current.length === length) {
+      results.push(current);
+      return;
+    }
+    for (let i = 0; i < available.length; i++) {
+      const nextAvailable = [...available];
+      nextAvailable.splice(i, 1);
+      rearrange(current + available[i], nextAvailable);
+    }
+  }
+
+  rearrange('', chars.split(''));
+  return results;
 }
