@@ -9,7 +9,9 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,html,css,json}\"",
     "test": "vitest run",
-    "prepare": "husky"
+    "prepare": "husky",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -21,8 +23,10 @@
     ]
   },
   "devDependencies": {
+    "@types/node": "^26.6.6",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
+    "gh-pages": "^6.3.0",
     "husky": "^9.1.7",
     "jiti": "^2.7.0",
     "jsdom": "^27.0.1",

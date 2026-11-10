@@ -216,16 +216,22 @@ function handleAttempt(guess: string) {
 
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
-  startTime = Date.now();
+  startTime = Date.now(); // Используем startTime
+  secondsElapsed = 0;
+
   timerInterval = window.setInterval(() => {
-    secondsElapsed++;
-    // Обновляем только текст таймера без полной перерисовки инпута, чтобы не сбивать фокус
+    if (!startTime) return;
+    
+    // Прошедшее время на основе startTime
+    secondsElapsed = Math.floor((Date.now() - startTime) / 1000);
+
+    // Обновление mins и secs
     const timerDisplayEl = document.querySelector('.game-status-bar strong:nth-child(2)') as HTMLElement;
-    // Простая перерисовка блока статистики или инкремент
-    const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
-    const secs = (secondsElapsed % 60).toString().padStart(2, '0');
-    // Можно обновить весь статус-бар точечно или вызывать render()
-    // Для простоты вызовем перерисовку, предварительно сохранив фокус и значение вводов если нужно
+    if (timerDisplayEl) {
+      const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+      const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+      timerDisplayEl.textContent = `${mins}:${secs}`;
+    }
   }, 1000);
 }
 
