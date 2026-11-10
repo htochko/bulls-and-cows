@@ -1,0 +1,10 @@
+# Dependencies
+node_modules/
+
+# Production builds
+dist/
+build/
+
+# OS generated files
+.DS_Store
+Thumbs.db
