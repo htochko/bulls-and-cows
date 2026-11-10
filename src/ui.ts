@@ -202,17 +202,34 @@ function attachEventListeners() {
 
 function handleAttempt(guess: string) {
   const validateGuessFn = createDigitValidator(currentBase)(currentLength);
-  if (!validateGuessFn(guess)) return;
+  if (!validateGuessFn(guess)) return
 
-  const feedback = evaluateGuess(guess, secretCode);
-  attemptHistory = [...attemptHistory, { guess, feedback }];
+  const normalizedGuess = currentBase === Base.hex ? guess.toLowerCase() : guess;
+
+  const isDuplicate = attemptHistory.some(
+    item => (currentBase === Base.hex ? item.guess.toLowerCase() : item.guess) === normalizedGuess
+  );
+
+  if (isDuplicate) {
+    const errorMsg = document.getElementById('error-msg') as HTMLElement;
+    if (errorMsg) {
+      errorMsg.textContent = 'Этот вариант уже был введен ранее!';
+    }
+    return;
+  }
+
+  const feedback = evaluateGuess(normalizedGuess, secretCode);
+  attemptHistory = [...attemptHistory, { guess: normalizedGuess, feedback }];
+
+  const guessInput = document.getElementById('guess-input') as HTMLInputElement;
+  if (guessInput) guessInput.value = '';
 
   if (feedback.bulls === currentLength) {
     endGame(true);
   } else {
     render();
   }
-}
+}  
 
 function startTimer() {
   if (timerInterval) clearInterval(timerInterval);
